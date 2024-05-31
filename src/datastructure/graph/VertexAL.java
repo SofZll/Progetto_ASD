@@ -23,7 +23,7 @@ public class VertexAL<D> extends Vertex<D> {
 	public VertexAL(D data, int index) { 
 		super(data);
 		this.index = index;
-		adjac =  new  LinkedList<Edge<D>>();
+		adjac =  new LinkedList<Edge<D>>();
 	}
 
 }

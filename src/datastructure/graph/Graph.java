@@ -40,7 +40,7 @@ public interface Graph<D> {
 	public int outDegree(Vertex<D> v);
 
 	/**
-	 *  Returns the list of edges exiting a vertex
+	 *  Returns the list of  exiting a vertex
      *  @param v vertex
 	 *  @return the list of edges of the vertex v
 	 */		

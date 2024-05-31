@@ -1,14 +1,17 @@
 package src.algorithm.sorting;
 
+import java.util.ArrayList;
+import src.datastructure.graph.WeightedEdge;
+
 /**
  * This class contains various sorting algorithms
  */
 public class Sorting {
 
-	private static <T extends Comparable<T>> void swap(T A[], int i, int j) {
-		T tmp = A[i];
-		A[i]  = A[j];
-		A[j]  = tmp;
+	private static <D> void swap(ArrayList<WeightedEdge<D>> A, int i, int j) {
+		WeightedEdge<D> tmp = A.get(i);
+		A.set(i, A.get(j));
+		A.set(j, tmp);
 	}
 	
 
@@ -152,16 +155,16 @@ public class Sorting {
 	 * @param <T> class of the object in the array
 	 */
 		
-	public static <T extends Comparable<T>> void heapsort(T A[]) {
-		heapify(A, A.length - 1, 0);
-		for (int c = (A.length - 1); c > 0; c--) {
-			T k = findmax(A);
+	public static <D> void heapsort(ArrayList<WeightedEdge<D>> A) {
+		heapify(A, A.size() - 1, 0);
+		for (int c = (A.size() - 1); c > 0; c--) {
+			WeightedEdge<D> k = findmax(A);
 			deletemax(A, c);
-			A[c] = k;
+			A.set(c, k);
 		}
 	}
 	
-	private static <T extends Comparable<T>> void heapify(T A[], int n, int i) {
+	private static <D> void heapify(ArrayList<WeightedEdge<D>> A, int n, int i) {
 		if (i >= n) return;
 		heapify(A, n, left(i));
 		heapify(A, n, right(i));
@@ -176,25 +179,25 @@ public class Sorting {
 		return ( 2*i + 2 );
 	}
 			
-	private static <T extends Comparable<T>> void fixheap(T A[], int c, int i) {
+	private static <D> void fixheap(ArrayList<WeightedEdge<D>> A, int c, int i) {
 		int l = left(i), r = right(i);
 		if (l > c) return;
 		int max = l;
-		if (r <= c && A[l].compareTo(A[r]) < 0)
+		if (r <= c && A.get(l).weight < A.get(r).weight)
 			max = r;
-		if (A[i].compareTo(A[max]) < 0) {
+		if (A.get(i).weight < A.get(max).weight) {
 			swap(A, i, max);
 			fixheap(A, c, max);
 		}
 	}
 	
-	private static <T extends Comparable<T>> T findmax(T A[]) {
-		return A[0];
+	private static <D> WeightedEdge<D> findmax(ArrayList<WeightedEdge<D>> A) {
+		return A.get(0);
 	}
 	
-	private static <T extends Comparable<T>> void deletemax(T A[], int c) {
+	private static <D> void deletemax(ArrayList<WeightedEdge<D>> A, int c) {
 		if (c <= 0) return;
-		A[0] = A[c];
+		A.set(0, A.get(c));
 		c--;
 		fixheap(A, c, 0);
 	}		

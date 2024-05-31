@@ -1,10 +1,9 @@
 package src.algorithm.MST;
 
+import java.util.*;
 import src.algorithm.sorting.Sorting;
 import src.datastructure.graph.*;
 import src.datastructure.unionfind.*;
-import java.util.*;
-import org.w3c.dom.css.Counter;
 
 /**
  * This class contains the implementation of the Kruskal's algorithm for the construction of a Minimum Spanning Tree (MST) of a weighted graph.
@@ -24,67 +23,57 @@ public class Kruskal<D> implements MST<D> {
 	 * 	
 	 * @param g the weighted graph
 	 */
-public void compute(WeightedGraph<D> g) {
-	QuickUnion<D> uf = new QuickUnion<D>();
-	WeightedGraph<D> t = new WeightedGraphAL<D>();
-	weight = 0;
-	ArrayList<QUnode<D>> uf_node = new ArrayList<QUnode<D>>(g.vertexNum());
+	@Override
+	public void compute(WeightedGraph<D> g) {
+		QuickUnion<D> uf = new QuickUnion<D>();
+		t = new WeightedGraphAL<D>();
+		weight = 0;
+		ArrayList<QUnode<D>> uf_node = new ArrayList<QUnode<D>>(g.vertexNum());
+		ArrayList<Vertex<D>> vertexes = new ArrayList<Vertex<D>>(g.vertexes());
 
-	for (Vertex<D> v : g.vertexes()) {
-		t.addVertex(v.data);
-		uf_node.add((int)v.data, uf.makeSet(v.data));
-	}
+		for (Vertex<D> v : g.vertexes()) {
+			vertexes.add((int)v.data, t.addVertex(v.data));
+			uf_node.add((int)v.data, uf.makeSet(v.data));
+		}
 
-	ArrayList<Edge<D>> edges = g.edges();
-	Double[] sort_edge = new Double[edges.size()];
-	for (int i = 0; i < edges.size(); i++) {
-		WeightedEdge<D> we = (WeightedEdge<D>) edges.get(i);
-		weight += we.weight;
-		sort_edge[i] = we.weight;
-	}
+		ArrayList<Edge<D>> edges = g.edges();
+		ArrayList<WeightedEdge<D>> sort_edge = new ArrayList<WeightedEdge<D>>(edges.size());
+		for (int i = 0; i < edges.size(); i++) {
+			sort_edge.add((WeightedEdge<D>) edges.get(i));
+		}
 
-	Sorting.heapsort(sort_edge);
+		Sorting.heapsort(sort_edge);
+		
 
-	for(Double w : sort_edge) {
-		for (Edge<D> e : edges) {
-			WeightedEdge<D> we = (WeightedEdge<D>) e;
-			if (we.weight == w) {
-				QUset source = uf.find(uf_node.get((int)we.source.data));
-				QUset dest = uf.find(uf_node.get((int)we.dest.data));
-				if(source != dest){
-					t.addEdge(we);
-					uf.union(source, dest);
-				}
+		for(WeightedEdge<D> we : sort_edge) {
+			QUset source = uf.find(uf_node.get((int)we.source.data));
+			QUset dest = uf.find(uf_node.get((int)we.dest.data));
+			if(source != dest){
+				weight += we.weight;
+				WeightedEdge<D> e = new WeightedEdge<D>(vertexes.get((int)we.source.data), vertexes.get((int)we.dest.data), we.weight);
+				t.addEdge(e);
+				uf.union(source, dest);
 			}
+				
 		}
 	}
-	g = t;
-	
-}
 	
 	/**
 	 * Returns the Minimum Spanning Tree (MST) of the weighted graph.
 	 * 
 	 * @return the Minimum Spanning Tree (MST) of the weighted graph
 	 */
+	@Override
 	public WeightedGraph<D> spanningTree() {
-		WeightedGraph<D> T = new WeightedGraphAL<D>();
-		for(Vertex<D> v : t.vertexes()) {
-			T.addVertex(v.data);
-		}
-		for(Edge<D> e : t.edges()) {
-			T.addEdge(e);
-		}
-		compute(T);
-		return T;
-		
+		return t;
 	}
-	
+
 	/**
 	 * Returns the total weight of the Minimum Spanning Tree (MST) of the weighted graph.
 	 * 
 	 * @return the total weight of the Minimum Spanning Tree (MST) of the weighted graph
 	 */
+	@Override
 	public double totalWeight() {
 		return weight;
 	}

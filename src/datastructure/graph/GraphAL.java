@@ -41,20 +41,20 @@ public class GraphAL<D> implements Graph<D> {
 	public ArrayList<Vertex<D>> vertexes() { 
 		ArrayList<Vertex<D>> v = new ArrayList<Vertex<D>>();
 		for (int i=0; i<n; i++) {
-			v.add(this.vertex(i));
+			v.add(vertex(i));
 		}
 		return v;
 	}
 	
 	public ArrayList<Edge<D>> edges() {
-		ArrayList<Edge<D>> e = new ArrayList<Edge<D>>();
+		ArrayList<Edge<D>> l = new ArrayList<Edge<D>>();
 		
 		for(Vertex<D> v : vertexes()) {
-			for(Edge<D> edge : outEdges(v)) {
-				e.add(edge);
+			for(Edge<D> e : ((VertexAL<D>)v).adjac) {
+				l.add(e);
 			}
 		}
-		return e;
+		return l;
 	}	
 
 	public int outDegree(Vertex<D> v) {
