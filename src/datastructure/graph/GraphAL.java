@@ -1,5 +1,6 @@
 package src.datastructure.graph;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedList;
@@ -29,23 +30,65 @@ public class GraphAL<D> implements Graph<D> {
 		vertexes = new ArrayList<VertexAL<D>>();
 	}
 
-	public int vertexNum() { }
+	public int vertexNum() {
+		return n;
+	}
 
-	public int edgeNum() { }
+	public int edgeNum() {
+		return m;
+	}
 
-	public ArrayList<Vertex<D>> vertexes() { }
+	public ArrayList<Vertex<D>> vertexes() { 
+		ArrayList<Vertex<D>> v = new ArrayList<Vertex<D>>();
+		for (int i=0; i<n; i++) {
+			v.add(this.vertex(i));
+		}
+		return v;
+	}
 	
-	public ArrayList<Edge<D>> edges() {	}
+	public ArrayList<Edge<D>> edges() {
+		ArrayList<Edge<D>> e = new ArrayList<Edge<D>>();
+		
+		for(Vertex<D> v : vertexes()) {
+			for(Edge<D> edge : outEdges(v)) {
+				e.add(edge);
+			}
+		}
+		return e;
+	}	
 
-	public int outDegree(Vertex<D> v) {	}
+	public int outDegree(Vertex<D> v) {
+		return ((VertexAL<D>)v).adjac.size();
+	}
 	
-	public ArrayList<Edge<D>> outEdges(Vertex<D> v) { }
+	public ArrayList<Edge<D>> outEdges(Vertex<D> v) {
+		ArrayList<Edge<D>> l = new ArrayList<Edge<D>>();
+		for (Edge<D> e : ((VertexAL<D>)v).adjac) {
+			l.add(e);
+		}
+		return l;
+	}
 	
-	public Edge<D> areAdjacent(Vertex<D> x, Vertex<D> y) { }
+	public Edge<D> areAdjacent(Vertex<D> x, Vertex<D> y) {
+		Edge<D> f = null;
+		for (Edge<D> e : outEdges(x)) {
+			if (e.dest == y) f = e;
+		}
+		return f;
+	}
 
-	public Vertex<D> addVertex(D data) { }
+	public Vertex<D> addVertex(D data) {
+		VertexAL<D> v = new VertexAL<D>(data,n);
+		vertexes.add(v);
+		n = n + 1;
+		return v;
+	}
 
-	public void addEdge(Edge<D> e) { }
+	public void addEdge(Edge<D> e) {
+		VertexAL<D> v = (VertexAL<D>)e.source;
+		v.adjac.add(e);
+		m = m + 1;
+	}
 	
 	public void removeVertex(Vertex<D> v) {
 		VertexAL<D> vAL = (VertexAL<D>)v;

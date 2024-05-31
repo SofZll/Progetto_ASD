@@ -1,7 +1,10 @@
 package src.algorithm.MST;
 
+import src.algorithm.sorting.Sorting;
 import src.datastructure.graph.*;
 import src.datastructure.unionfind.*;
+import java.util.*;
+import org.w3c.dom.css.Counter;
 
 /**
  * This class contains the implementation of the Kruskal's algorithm for the construction of a Minimum Spanning Tree (MST) of a weighted graph.
@@ -21,26 +24,43 @@ public class Kruskal<D> implements MST<D> {
 	 * 	
 	 * @param g the weighted graph
 	 */
-    public void compute(WeightedGraph<D> g) {
-		UnionFind<D, UFnode, UFset> UF = new UnionFindImpl<D, UFnode, UFset>();
-		WeightedGraph<D> T = new WeightedGraphImpl<D>();
-		for(int i = 1; i <= g.numNodes(); i++) {
-			UF.makeSet(i);
-		}
-		sortedEdges = g.sortedEdges();
-		double weight_g = 0;
-		for(Edge<D> e : sortedEdges) {
-			UFset<D> set1 = UF.find(e.getNode1());
-			UFset<D> set2 = UF.find(e.getNode2());
-			if(set1 != set2) {
-				T.addEdge(e.getNode1(), e.getNode2(), e.getWeight());
-				UF.union(set1, set2);
-				weight_g += e.getWeight();
+public void compute(WeightedGraph<D> g) {
+	QuickUnion<D> uf = new QuickUnion<D>();
+	WeightedGraph<D> t = new WeightedGraphAL<D>();
+	weight = 0;
+	ArrayList<QUnode<D>> uf_node = new ArrayList<QUnode<D>>(g.vertexNum());
+
+	for (Vertex<D> v : g.vertexes()) {
+		t.addVertex(v.data);
+		uf_node.add((int)v.data, uf.makeSet(v.data));
+	}
+
+	ArrayList<Edge<D>> edges = g.edges();
+	Double[] sort_edge = new Double[edges.size()];
+	for (int i = 0; i < edges.size(); i++) {
+		WeightedEdge<D> we = (WeightedEdge<D>) edges.get(i);
+		weight += we.weight;
+		sort_edge[i] = we.weight;
+	}
+
+	Sorting.heapsort(sort_edge);
+
+	for(Double w : sort_edge) {
+		for (Edge<D> e : edges) {
+			WeightedEdge<D> we = (WeightedEdge<D>) e;
+			if (we.weight == w) {
+				QUset source = uf.find(uf_node.get((int)we.source.data));
+				QUset dest = uf.find(uf_node.get((int)we.dest.data));
+				if(source != dest){
+					t.addEdge(we);
+					uf.union(source, dest);
+				}
 			}
 		}
-		g = T;
-		weight = weight_g;
-    }
+	}
+	g = t;
+	
+}
 	
 	/**
 	 * Returns the Minimum Spanning Tree (MST) of the weighted graph.
@@ -48,9 +68,12 @@ public class Kruskal<D> implements MST<D> {
 	 * @return the Minimum Spanning Tree (MST) of the weighted graph
 	 */
 	public WeightedGraph<D> spanningTree() {
-		WeightedGraph<D> T = new WeightedGraphImpl<D>();
+		WeightedGraph<D> T = new WeightedGraphAL<D>();
+		for(Vertex<D> v : t.vertexes()) {
+			T.addVertex(v.data);
+		}
 		for(Edge<D> e : t.edges()) {
-			T.addEdge(e.getNode1(), e.getNode2(), e.getWeight());
+			T.addEdge(e);
 		}
 		compute(T);
 		return T;
@@ -63,6 +86,6 @@ public class Kruskal<D> implements MST<D> {
 	 * @return the total weight of the Minimum Spanning Tree (MST) of the weighted graph
 	 */
 	public double totalWeight() {
-		return weight;		
+		return weight;
 	}
 }

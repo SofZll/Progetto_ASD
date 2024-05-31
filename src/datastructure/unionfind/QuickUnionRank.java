@@ -18,11 +18,23 @@ public class QuickUnionRank<D> extends QuickUnion<D> {
 	public QuickUnionRank() { }	
 
 	public QUnode<D> makeSet(D d) {
-		return null;
+		QURset s = new QURset();
+		QUnode node = new QUnode(d, s);
+		return node;
 	}
 
 	public void union(QUset s, QUset t) {
-
+		if (s == t) return;
+		else if (((QURset)s).rank == ((QURset)t).rank){
+			super.union(s, t);
+			((QURset)s).rank++;
+		}
+		else if (((QURset)s).rank > ((QURset)t).rank){
+			super.union(s, t);
+		}
+		else {
+			super.union(t, s);
+		}
 	}
 
 }
