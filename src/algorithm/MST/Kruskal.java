@@ -23,19 +23,21 @@ public class Kruskal<D> implements MST<D> {
 	 * 	
 	 * @param g the weighted graph
 	 */
-	@Override
 	public void compute(WeightedGraph<D> g) {
-		QuickUnion<D> uf = new QuickUnion<D>();
-		t = new WeightedGraphAL<D>();
+		QuickUnionRank<D> uf = new QuickUnionRank<D>(); //creation of the QuickUnionRank uf datastructure
+		t = new WeightedGraphAL<D>(); //allocation of spece for the t WeightedGraph
 		weight = 0;
+		// creaton of two ArrayList to memorize the QUnode<D> and Vertex<D> that will be added to uf and t
 		ArrayList<QUnode<D>> uf_node = new ArrayList<QUnode<D>>(g.vertexNum());
-		ArrayList<Vertex<D>> vertexes = new ArrayList<Vertex<D>>(g.vertexes());
+		ArrayList<Vertex<D>> vertexes = new ArrayList<Vertex<D>>(g.vertexNum());
 
+		// vertexes are added to the data structures
 		for (Vertex<D> v : g.vertexes()) {
 			vertexes.add((int)v.data, t.addVertex(v.data));
 			uf_node.add((int)v.data, uf.makeSet(v.data));
 		}
 
+		// creation of a ArrayList<WeightedEdge<D>> with all the edges of the graph to be sorted
 		ArrayList<Edge<D>> edges = g.edges();
 		ArrayList<WeightedEdge<D>> sort_edge = new ArrayList<WeightedEdge<D>>(edges.size());
 		for (int i = 0; i < edges.size(); i++) {
@@ -44,7 +46,10 @@ public class Kruskal<D> implements MST<D> {
 
 		Sorting.heapsort(sort_edge);
 		
-
+		/*
+		* each edge is picked individually from the sorted ArrayList and if the souce and dest node are not in the same uf set
+		* the edge is added to the MST and the two sets are merged
+		*/
 		for(WeightedEdge<D> we : sort_edge) {
 			QUset source = uf.find(uf_node.get((int)we.source.data));
 			QUset dest = uf.find(uf_node.get((int)we.dest.data));
@@ -63,7 +68,6 @@ public class Kruskal<D> implements MST<D> {
 	 * 
 	 * @return the Minimum Spanning Tree (MST) of the weighted graph
 	 */
-	@Override
 	public WeightedGraph<D> spanningTree() {
 		return t;
 	}
@@ -73,7 +77,6 @@ public class Kruskal<D> implements MST<D> {
 	 * 
 	 * @return the total weight of the Minimum Spanning Tree (MST) of the weighted graph
 	 */
-	@Override
 	public double totalWeight() {
 		return weight;
 	}

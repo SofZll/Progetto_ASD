@@ -87,6 +87,8 @@ public class GraphAL<D> implements Graph<D> {
 	public void addEdge(Edge<D> e) {
 		VertexAL<D> v = (VertexAL<D>)e.source;
 		v.adjac.add(e);
+		v = (VertexAL<D>)e.dest;
+		v.adjac.add(e);
 		m = m + 1;
 	}
 	

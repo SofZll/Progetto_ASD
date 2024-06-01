@@ -1,4 +1,10 @@
 package src.algorithm.sorting;
+/**
+ * The sort algorithms hade been modified to work with the WeightedEdge class.
+ * This will allow the sorting to return the edges in the order of their weights.
+ * With the original code the sorting would return the edges weight in ascending order.
+ * So an extra iteration is needed to find an edge with the same weight.
+ */
 
 import java.util.ArrayList;
 import src.datastructure.graph.WeightedEdge;
@@ -152,7 +158,7 @@ public class Sorting {
 	 * <li> Best-case cost: &Theta;(n)	
 	 * </ul>
 	 * @param A the array to be sorted
-	 * @param <T> class of the object in the array
+	 * @param <WeightedEdge<D>> class of the object in the ArrayList
 	 */
 		
 	public static <D> void heapsort(ArrayList<WeightedEdge<D>> A) {
@@ -183,9 +189,9 @@ public class Sorting {
 		int l = left(i), r = right(i);
 		if (l > c) return;
 		int max = l;
-		if (r <= c && A.get(l).weight < A.get(r).weight)
+		if (r <= c && A.get(l).weight < A.get(r).weight) //the weitghts are fetched ompared here
 			max = r;
-		if (A.get(i).weight < A.get(max).weight) {
+		if (A.get(i).weight < A.get(max).weight) { //the weitghts are fetched ompared here
 			swap(A, i, max);
 			fixheap(A, c, max);
 		}
